@@ -1,4 +1,4 @@
-# SprayChart
+# Overlaid Spray Charts
 
 Python project for generating spray chart PNGs over a user-generated stadium background image. The code uses Trackman distance and bearing to properly overlay the spray chart onto the desired field dimensions.
 
