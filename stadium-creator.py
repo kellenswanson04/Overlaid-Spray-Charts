@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 
-def create_goss_stadium_chart(batted_balls=None):
+def draw_stadium(batted_balls=None):
     """
     Plots a 2D spray chart overlay of Goss Stadium.
     batted_balls: List of dicts containing 'distance', 'angle' (0=center, negative=left, positive=right), and optional 'type'
@@ -38,17 +38,23 @@ def create_goss_stadium_chart(batted_balls=None):
     ax.plot([0, wall_x[0]], [0, wall_y[0]], color='black', lw=1.5)
     ax.plot([0, wall_x[-1]], [0, wall_y[-1]], color='black', lw=1.5)
     
-    # 4. Draw Infield Diamond (90 ft basepaths)
-    # Home plate is at (0,0)
-    # First base: (90*sin(45), 90*cos(45)) -> approx (63.64, 63.64)
-    # Second base: (0, 90*sqrt(2)) -> approx (0, 127.28)
-    # Third base: (-63.64, 63.64)
+    # 4. Draw Infield Diamond (90ft baselines)
     base_dist = 90
-    coord = base_dist * np.sin(np.radians(45))
+    # Calculate the side offset in feet (approx 63.64 ft)
+    coord = base_dist * np.sin(np.radians(45)) 
+    # Calculate total distance from home to 2nd base (approx 127.28 ft)
+    to_second = base_dist * np.sqrt(2)         
     
-    infield_x = [0, coord, 0, -coord, 0]
-    infield_y = [0, coord, base_dist * np.sqrt(2), coord, 0]
-    ax.plot(infield_x, infield_y, color='#bcaaa4', lw=2, zorder=1) # Dirt color line
+    # Coordinates sequence: Home -> 1st -> 2nd -> 3rd -> Home
+    infield_x = [0,  coord, 0,         -coord, 0]
+    infield_y = [0,  coord, to_second,  coord, 0]
+    
+    # Draw the basepaths with a higher zorder to overlay cleanly
+    ax.plot(infield_x, infield_y, color='#bcaaa4', lw=2.5, zorder=4, label='_nolegend_')
+    
+    # Optional: Plot explicit tiny squares for the actual bases for visual reference
+    ax.scatter([0, coord, 0, -coord], [0, coord, to_second, coord], 
+               marker='s', color='white', edgecolor='black', s=30, zorder=5)
     
     # 5. Label the Wall Distances
     for ang, dist in wall_specs:
@@ -78,6 +84,6 @@ def create_goss_stadium_chart(batted_balls=None):
     
     return fig
 
-fig = create_goss_stadium_chart()
+fig = draw_stadium()
 fig.savefig('gossstadium.png', dpi=300, bbox_inches='tight')
 plt.show()

@@ -65,10 +65,21 @@ def draw_goss_stadium_wireframe(ax):
     
     # Infield Diamond Profile setup (90ft baselines)
     base_dist = 90
-    coord = base_dist * np.sin(np.radians(45))
-    infield_x = [0, coord, 0, -coord, 0]
-    infield_y = [0, coord, base_dist * np.sqrt(2), coord, 0]
-    ax.plot(infield_x, infield_y, color='#d7ccc8', lw=2, zorder=2)
+    # Calculate the side offset in feet (approx 63.64 ft)
+    coord = base_dist * np.sin(np.radians(45)) 
+    # Calculate total distance from home to 2nd base (approx 127.28 ft)
+    to_second = base_dist * np.sqrt(2)         
+    
+    # Coordinates sequence: Home -> 1st -> 2nd -> 3rd -> Home
+    infield_x = [0,  coord, 0,         -coord, 0]
+    infield_y = [0,  coord, to_second,  coord, 0]
+    
+    # Draw the basepaths with a higher zorder to overlay cleanly
+    ax.plot(infield_x, infield_y, color='#bcaaa4', lw=2.5, zorder=4, label='_nolegend_')
+    
+    # Optional: Plot explicit tiny squares for the actual bases for visual reference
+    ax.scatter([0, coord, 0, -coord], [0, coord, to_second, coord], 
+               marker='s', color='white', edgecolor='black', s=30, zorder=5)
     
     # Annotate fence depths
     for ang, dist in wall_specs:
